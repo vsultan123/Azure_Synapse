@@ -1,0 +1,17 @@
+{
+	"name": "SQL script 1",
+	"properties": {
+		"content": {
+			"query": "insert into firstdb.dbo.vasi_test(col1) values (5);\n\nselect * from firstdb.dbo.vasi_test;\ncommit;",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "firstdb",
+				"poolName": "firstdb"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
