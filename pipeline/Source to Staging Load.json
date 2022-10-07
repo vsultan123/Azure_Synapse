@@ -37,10 +37,82 @@
 						"queryTimeout": "02:00:00"
 					},
 					"dataset": {
-						"referenceName": "DB2Connection",
+						"referenceName": "DB2Connection_another",
 						"type": "DatasetReference"
 					},
 					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Find Objects need to be load",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Find Objects need to be load').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Copy data1",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlPoolSource",
+									"sqlReaderQuery": {
+										"value": "@item().SQL_Query",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00"
+								},
+								"sink": {
+									"type": "SqlPoolSink",
+									"allowCopyCommand": true,
+									"tableOption": "autoCreate"
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "FirstDBconnection",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DB2Connection",
+									"type": "DatasetReference",
+									"parameters": {
+										"Schema": {
+											"value": "@item().Staging_Schema_Name",
+											"type": "Expression"
+										},
+										"TableName": {
+											"value": "@item().Staging_Object_name",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
 				}
 			}
 		],
@@ -49,6 +121,9 @@
 				"type": "string"
 			},
 			"Load_Type": {
+				"type": "string"
+			},
+			"BatchID": {
 				"type": "string"
 			}
 		},

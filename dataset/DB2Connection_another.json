@@ -1,14 +1,6 @@
 {
-	"name": "DB2Connection",
+	"name": "DB2Connection_another",
 	"properties": {
-		"parameters": {
-			"Schema": {
-				"type": "string"
-			},
-			"TableName": {
-				"type": "string"
-			}
-		},
 		"annotations": [],
 		"type": "SqlPoolTable",
 		"schema": [],
