@@ -1,0 +1,12 @@
+{
+	"name": "DB2Connection",
+	"properties": {
+		"annotations": [],
+		"type": "SqlPoolTable",
+		"schema": [],
+		"sqlPool": {
+			"referenceName": "DB2",
+			"type": "SqlPoolReference"
+		}
+	}
+}

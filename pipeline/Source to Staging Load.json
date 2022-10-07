@@ -17,15 +17,41 @@
 				"typeProperties": {
 					"source": {
 						"type": "SqlPoolSource",
+						"sqlReaderStoredProcedureName": "[stats].[usp_object_list_to_load]",
+						"storedProcedureParameters": {
+							"DataSourceName": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.DataSourcename",
+									"type": "Expression"
+								}
+							},
+							"Load_Type": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.Load_Type",
+									"type": "Expression"
+								}
+							}
+						},
 						"queryTimeout": "02:00:00"
 					},
 					"dataset": {
-						"referenceName": "FirstDBconnection",
+						"referenceName": "DB2Connection",
 						"type": "DatasetReference"
-					}
+					},
+					"firstRowOnly": false
 				}
 			}
 		],
+		"parameters": {
+			"DataSourcename": {
+				"type": "string"
+			},
+			"Load_Type": {
+				"type": "string"
+			}
+		},
 		"annotations": []
 	}
 }
