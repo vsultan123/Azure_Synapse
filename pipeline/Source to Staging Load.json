@@ -84,7 +84,7 @@
 								},
 								"sink": {
 									"type": "SqlPoolSink",
-									"allowCopyCommand": true,
+									"writeBehavior": "Insert",
 									"tableOption": "autoCreate"
 								},
 								"enableStaging": false
