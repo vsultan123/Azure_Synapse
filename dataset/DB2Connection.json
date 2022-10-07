@@ -12,6 +12,16 @@
 		"annotations": [],
 		"type": "SqlPoolTable",
 		"schema": [],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().Schema",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@dataset().TableName",
+				"type": "Expression"
+			}
+		},
 		"sqlPool": {
 			"referenceName": "DB2",
 			"type": "SqlPoolReference"
