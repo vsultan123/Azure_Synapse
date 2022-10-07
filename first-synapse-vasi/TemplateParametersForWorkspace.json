@@ -5,6 +5,9 @@
 		"workspaceName": {
 			"value": "first-synapse-vasi"
 		},
+		"AzureSynapseAnalytics1_connectionString": {
+			"value": ""
+		},
 		"first-synapse-vasi-WorkspaceDefaultSqlServer_connectionString": {
 			"value": ""
 		},
