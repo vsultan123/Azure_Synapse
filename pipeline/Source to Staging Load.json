@@ -250,7 +250,10 @@
 										"type": "DateTime"
 									},
 									"processName": {
-										"value": "@item().Staging_Object_name",
+										"value": {
+											"value": "@item().Staging_Object_name",
+											"type": "Expression"
+										},
 										"type": "String"
 									},
 									"status": {
@@ -298,7 +301,10 @@
 										"type": "String"
 									},
 									"processName": {
-										"value": "@item().Staging_Object_name",
+										"value": {
+											"value": "@item().Staging_Object_name",
+											"type": "Expression"
+										},
 										"type": "String"
 									}
 								}
@@ -357,7 +363,7 @@
 					{
 						"activity": "ForEach1",
 						"dependencyConditions": [
-							"Skipped"
+							"Succeeded"
 						]
 					}
 				],
