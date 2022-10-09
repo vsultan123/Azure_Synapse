@@ -238,6 +238,107 @@
 											}
 										}
 									}
+								},
+								{
+									"name": "Update Process End Date and WaterMark Column",
+									"type": "SqlPoolStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "Copy data1",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"sqlPool": {
+										"referenceName": "DB2",
+										"type": "SqlPoolReference"
+									},
+									"typeProperties": {
+										"storedProcedureName": "[stats].[USP_Table_Extraction_onSuccess]",
+										"storedProcedureParameters": {
+											"datasource": {
+												"value": {
+													"value": "@pipeline().parameters.DataSourcename",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"pipelineTriggerTime": {
+												"value": {
+													"value": "@pipeline().TriggerTime",
+													"type": "Expression"
+												},
+												"type": "DateTime"
+											},
+											"processName": {
+												"value": {
+													"value": "@item().Staging_Object_name",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"status": {
+												"value": "SUCCESS",
+												"type": "String"
+											}
+										}
+									}
+								},
+								{
+									"name": "SQL pool stored procedure1",
+									"type": "SqlPoolStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "Copy data1",
+											"dependencyConditions": [
+												"Failed"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"sqlPool": {
+										"referenceName": "DB2",
+										"type": "SqlPoolReference"
+									},
+									"typeProperties": {
+										"storedProcedureName": "[stats].[USP_Table_Extraction_onFailure]",
+										"storedProcedureParameters": {
+											"datasource": {
+												"value": {
+													"value": "@pipeline().parameters.DataSourcename",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"Error_msg": {
+												"value": "Pipeline Failed Due to an Error",
+												"type": "String"
+											},
+											"processName": {
+												"value": {
+													"value": "@item().Staging_Object_name",
+													"type": "Expression"
+												},
+												"type": "String"
+											}
+										}
+									}
 								}
 							]
 						}
@@ -281,6 +382,92 @@
 										"type": "Expression"
 									},
 									"type": "DateTime"
+								}
+							}
+						}
+					},
+					{
+						"name": "Update Main Pipeline Success",
+						"type": "SqlPoolStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "ForEach1",
+								"dependencyConditions": [
+									"Skipped"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"sqlPool": {
+							"referenceName": "DB2",
+							"type": "SqlPoolReference"
+						},
+						"typeProperties": {
+							"storedProcedureName": "[stats].[USP_Update_Pipeline_OnSuccess]",
+							"storedProcedureParameters": {
+								"DataSourceName": {
+									"value": {
+										"value": "@pipeline().parameters.DataSourcename",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"pipeline_name": {
+									"value": {
+										"value": "@pipeline().Pipeline",
+										"type": "Expression"
+									},
+									"type": "String"
+								}
+							}
+						}
+					},
+					{
+						"name": "Update Main Pipeline as Failed",
+						"type": "SqlPoolStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "ForEach1",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"sqlPool": {
+							"referenceName": "DB2",
+							"type": "SqlPoolReference"
+						},
+						"typeProperties": {
+							"storedProcedureName": "[stats].[USP_Update_Pipeline_OnFailure]",
+							"storedProcedureParameters": {
+								"DataSourceName": {
+									"value": {
+										"value": "@pipeline().parameters.DataSourcename",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"pipeline_name": {
+									"value": {
+										"value": "@pipeline().Pipeline",
+										"type": "Expression"
+									},
+									"type": "String"
 								}
 							}
 						}
