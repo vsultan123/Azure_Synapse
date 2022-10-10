@@ -1103,7 +1103,7 @@
 						"type": "SqlPoolStoredProcedure",
 						"dependsOn": [
 							{
-								"activity": "Update Master Pipeline End Data and Status",
+								"activity": "Employees Incremental Load",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -1157,9 +1157,21 @@
 						"type": "SqlPoolStoredProcedure",
 						"dependsOn": [
 							{
-								"activity": "Update Master Pipeline End Date and Failed Status",
+								"activity": "Source to staging",
 								"dependencyConditions": [
-									"Succeeded"
+									"Failed"
+								]
+							},
+							{
+								"activity": "Full Load",
+								"dependencyConditions": [
+									"Failed"
+								]
+							},
+							{
+								"activity": "Employees Incremental Load",
+								"dependencyConditions": [
+									"Failed"
 								]
 							}
 						],
