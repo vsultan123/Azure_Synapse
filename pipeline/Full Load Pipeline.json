@@ -125,7 +125,14 @@
 						{
 							"name": "truncate Dest Tables",
 							"type": "SqlPoolStoredProcedure",
-							"dependsOn": [],
+							"dependsOn": [
+								{
+									"activity": "Update Process Start Time",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
 							"policy": {
 								"timeout": "0.12:00:00",
 								"retry": 0,
@@ -153,6 +160,144 @@
 											"value": "@item().Target_Object_name",
 											"type": "Expression"
 										},
+										"type": "String"
+									}
+								}
+							}
+						},
+						{
+							"name": "Update Process Start Time",
+							"type": "SqlPoolStoredProcedure",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"sqlPool": {
+								"referenceName": "DB2",
+								"type": "SqlPoolReference"
+							},
+							"typeProperties": {
+								"storedProcedureName": "[stats].[DW_Load_on_Start]",
+								"storedProcedureParameters": {
+									"datasource": {
+										"value": {
+											"value": "@pipeline().parameters.Datasourcename",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"processName": {
+										"value": {
+											"value": "@item().target_object_name",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"status": {
+										"value": "RUNNING",
+										"type": "String"
+									}
+								}
+							}
+						},
+						{
+							"name": "Update End Date and Status on Success",
+							"type": "SqlPoolStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "Full Load",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"sqlPool": {
+								"referenceName": "DB2",
+								"type": "SqlPoolReference"
+							},
+							"typeProperties": {
+								"storedProcedureName": "[stats].[DW_Load_onSuccess]",
+								"storedProcedureParameters": {
+									"datasource": {
+										"value": {
+											"value": "@pipeline().parameters.Datasourcename",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"processName": {
+										"value": {
+											"value": "@item().target_object_name",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"status": {
+										"value": "SUCCESS",
+										"type": "String"
+									}
+								}
+							}
+						},
+						{
+							"name": "Update End Date and Status on Failure",
+							"type": "SqlPoolStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "Full Load",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"sqlPool": {
+								"referenceName": "DB2",
+								"type": "SqlPoolReference"
+							},
+							"typeProperties": {
+								"storedProcedureName": "[stats].[DW_Load_OnFailure]",
+								"storedProcedureParameters": {
+									"datasource": {
+										"value": {
+											"value": "@pipeline().parameters.Datasourcename",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"Error_msg": {
+										"value": "Pipeline Failed Due to an error",
+										"type": "String"
+									},
+									"processName": {
+										"value": {
+											"value": "@item().target_object_name",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"status": {
+										"value": "FAILED",
 										"type": "String"
 									}
 								}
