@@ -608,6 +608,12 @@
 								"dependencyConditions": [
 									"Failed"
 								]
+							},
+							{
+								"activity": "Find tables to be fully Loaded in Target",
+								"dependencyConditions": [
+									"Failed"
+								]
 							}
 						],
 						"policy": {
@@ -1323,6 +1329,12 @@
 						"dependsOn": [
 							{
 								"activity": "ForEach1",
+								"dependencyConditions": [
+									"Failed"
+								]
+							},
+							{
+								"activity": "Find Objects need to be load",
 								"dependencyConditions": [
 									"Failed"
 								]
