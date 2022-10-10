@@ -401,6 +401,12 @@
 						"dependencyConditions": [
 							"Failed"
 						]
+					},
+					{
+						"activity": "Find tables to be fully Loaded in Target",
+						"dependencyConditions": [
+							"Failed"
+						]
 					}
 				],
 				"policy": {

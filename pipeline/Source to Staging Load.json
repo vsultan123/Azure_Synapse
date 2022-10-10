@@ -408,6 +408,12 @@
 						"dependencyConditions": [
 							"Failed"
 						]
+					},
+					{
+						"activity": "Find Objects need to be load",
+						"dependencyConditions": [
+							"Failed"
+						]
 					}
 				],
 				"policy": {
