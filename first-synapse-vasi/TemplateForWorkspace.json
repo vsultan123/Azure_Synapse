@@ -98,7 +98,8 @@
 										"sink": {
 											"type": "SqlPoolSink",
 											"writeBehavior": "Insert",
-											"sqlWriterUseTableLock": false
+											"sqlWriterUseTableLock": false,
+											"tableOption": "autoCreate"
 										},
 										"enableStaging": false,
 										"translator": {
