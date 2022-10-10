@@ -60,10 +60,6 @@
 							"typeProperties": {
 								"source": {
 									"type": "SqlPoolSource",
-									"sqlReaderQuery": {
-										"value": "@concat(item().staging_schema_name,'.',item().staging_object_name)",
-										"type": "Expression"
-									},
 									"queryTimeout": "02:00:00"
 								},
 								"sink": {
@@ -84,8 +80,18 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "DB2Connection_another",
-									"type": "DatasetReference"
+									"referenceName": "DB2Connection",
+									"type": "DatasetReference",
+									"parameters": {
+										"Schema": {
+											"value": "@item().Staging_Schema_Name",
+											"type": "Expression"
+										},
+										"TableName": {
+											"value": "@item().Staging_Object_Name",
+											"type": "Expression"
+										}
+									}
 								}
 							],
 							"outputs": [
