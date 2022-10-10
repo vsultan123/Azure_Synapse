@@ -33,7 +33,14 @@
 					{
 						"name": "Incremental Load Employees",
 						"type": "SqlPoolStoredProcedure",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "Update Incremental Load Pipeline Start Date and status",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "0.12:00:00",
 							"retry": 0,
@@ -49,11 +56,138 @@
 						"typeProperties": {
 							"storedProcedureName": "[stats].[Merge_Employees]"
 						}
+					},
+					{
+						"name": "Update Incremental Load Pipeline Start Date and status",
+						"type": "SqlPoolStoredProcedure",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"sqlPool": {
+							"referenceName": "DB2",
+							"type": "SqlPoolReference"
+						},
+						"typeProperties": {
+							"storedProcedureName": "[stats].[USP_Update_Pipeline_Start_Dates]",
+							"storedProcedureParameters": {
+								"DataSourceName": {
+									"value": {
+										"value": "@pipeline().parameters.DataSourceName",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"pipeline_name": {
+									"value": {
+										"value": "@pipeline().Pipeline",
+										"type": "Expression"
+									},
+									"type": "String"
+								}
+							}
+						}
+					},
+					{
+						"name": "Update Incremental Load Pipeline end Date and status",
+						"type": "SqlPoolStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "Incremental Load Employees",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"sqlPool": {
+							"referenceName": "DB2",
+							"type": "SqlPoolReference"
+						},
+						"typeProperties": {
+							"storedProcedureName": "[stats].[USP_Update_Pipeline_OnSuccess]",
+							"storedProcedureParameters": {
+								"DataSourceName": {
+									"value": {
+										"value": "@pipeline().parameters.DataSourceName",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"pipeline_name": {
+									"value": {
+										"value": "@pipeline().Pipeline",
+										"type": "Expression"
+									},
+									"type": "String"
+								}
+							}
+						}
+					},
+					{
+						"name": "Update Pipeline end Date and failed status",
+						"type": "SqlPoolStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "Incremental Load Employees",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"sqlPool": {
+							"referenceName": "DB2",
+							"type": "SqlPoolReference"
+						},
+						"typeProperties": {
+							"storedProcedureName": "[stats].[USP_Update_Pipeline_OnFailure]",
+							"storedProcedureParameters": {
+								"DataSourceName": {
+									"value": {
+										"value": "@pipeline().parameters.DataSourceName",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"pipeline_name": {
+									"value": {
+										"value": "@pipeline().Pipeline",
+										"type": "Expression"
+									},
+									"type": "String"
+								}
+							}
+						}
 					}
 				],
 				"policy": {
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
+				},
+				"parameters": {
+					"DataSourceName": {
+						"type": "string"
+					}
 				},
 				"annotations": []
 			},
@@ -449,7 +583,12 @@
 								"type": "PipelineReference"
 							},
 							"waitOnCompletion": true,
-							"parameters": {}
+							"parameters": {
+								"DataSourceName": {
+									"value": "@pipeline().parameters.DataSourceName",
+									"type": "Expression"
+								}
+							}
 						}
 					},
 					{
