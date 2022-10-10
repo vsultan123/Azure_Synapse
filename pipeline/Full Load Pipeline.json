@@ -23,7 +23,8 @@
 					"dataset": {
 						"referenceName": "DB2Connection_another",
 						"type": "DatasetReference"
-					}
+					},
+					"firstRowOnly": false
 				}
 			},
 			{
