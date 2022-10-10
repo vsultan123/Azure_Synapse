@@ -39,6 +39,26 @@
 					},
 					"waitOnCompletion": true
 				}
+			},
+			{
+				"name": "Employees Incremental Load",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Full Load",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Employees Incremental Load",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
 			}
 		],
 		"annotations": []
