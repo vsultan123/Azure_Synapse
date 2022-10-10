@@ -47,7 +47,13 @@
 						"referenceName": "Full Load Pipeline",
 						"type": "PipelineReference"
 					},
-					"waitOnCompletion": true
+					"waitOnCompletion": true,
+					"parameters": {
+						"Datasourcename": {
+							"value": "@pipeline().parameters.DataSourceName",
+							"type": "Expression"
+						}
+					}
 				}
 			},
 			{
