@@ -73,7 +73,13 @@
 						"referenceName": "Employees Incremental Load",
 						"type": "PipelineReference"
 					},
-					"waitOnCompletion": true
+					"waitOnCompletion": true,
+					"parameters": {
+						"DataSourceName": {
+							"value": "@pipeline().parameters.DataSourceName",
+							"type": "Expression"
+						}
+					}
 				}
 			},
 			{
