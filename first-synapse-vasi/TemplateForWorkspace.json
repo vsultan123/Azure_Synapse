@@ -89,6 +89,13 @@
 										"type": "Expression"
 									},
 									"type": "String"
+								},
+								"pipeline_triggered_time": {
+									"value": {
+										"value": "@pipeline().TriggerTime",
+										"type": "Expression"
+									},
+									"type": "DateTime"
 								}
 							}
 						}
