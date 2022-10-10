@@ -261,6 +261,18 @@
 									"dependencyConditions": [
 										"Failed"
 									]
+								},
+								{
+									"activity": "truncate Dest Tables",
+									"dependencyConditions": [
+										"Failed"
+									]
+								},
+								{
+									"activity": "Update Process Start Time",
+									"dependencyConditions": [
+										"Failed"
+									]
 								}
 							],
 							"policy": {
