@@ -181,7 +181,10 @@
 					"storedProcedureName": "[stats].[USP_Update_Pipeline_Start_Dates]",
 					"storedProcedureParameters": {
 						"DataSourceName": {
-							"value": "SAP-BW",
+							"value": {
+								"value": "@pipeline().parameters.Datasourcename",
+								"type": "Expression"
+							},
 							"type": "String"
 						},
 						"pipeline_name": {
