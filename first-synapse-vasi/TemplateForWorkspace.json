@@ -696,6 +696,24 @@
 								"dependencyConditions": [
 									"Failed"
 								]
+							},
+							{
+								"activity": "Source to staging",
+								"dependencyConditions": [
+									"Failed"
+								]
+							},
+							{
+								"activity": "Full Load",
+								"dependencyConditions": [
+									"Failed"
+								]
+							},
+							{
+								"activity": "Update Master pipeline start time",
+								"dependencyConditions": [
+									"Failed"
+								]
 							}
 						],
 						"policy": {
