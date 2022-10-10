@@ -468,6 +468,18 @@
 											"dependencyConditions": [
 												"Failed"
 											]
+										},
+										{
+											"activity": "truncate Dest Tables",
+											"dependencyConditions": [
+												"Failed"
+											]
+										},
+										{
+											"activity": "Update Process Start Time",
+											"dependencyConditions": [
+												"Failed"
+											]
 										}
 									],
 									"policy": {
@@ -856,12 +868,6 @@
 							},
 							{
 								"activity": "Full Load",
-								"dependencyConditions": [
-									"Failed"
-								]
-							},
-							{
-								"activity": "Update Master pipeline start time",
 								"dependencyConditions": [
 									"Failed"
 								]
