@@ -70,7 +70,14 @@
 					{
 						"name": "Find tables to be fully Loaded in Target",
 						"type": "Lookup",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "Update Full Load Pipeline Start Date",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "0.12:00:00",
 							"retry": 0,
@@ -219,18 +226,149 @@
 								}
 							]
 						}
+					},
+					{
+						"name": "Update Full Load Pipeline Start Date",
+						"type": "SqlPoolStoredProcedure",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"sqlPool": {
+							"referenceName": "DB2",
+							"type": "SqlPoolReference"
+						},
+						"typeProperties": {
+							"storedProcedureName": "[stats].[USP_Update_Pipeline_Start_Dates]",
+							"storedProcedureParameters": {
+								"DataSourceName": {
+									"value": "SAP-BW",
+									"type": "String"
+								},
+								"pipeline_name": {
+									"value": {
+										"value": "@pipeline().Pipeline",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"pipeline_triggered_time": {
+									"value": {
+										"value": "@pipeline().TriggerTime",
+										"type": "Expression"
+									},
+									"type": "DateTime"
+								}
+							}
+						}
+					},
+					{
+						"name": "Update Full Load Pipeline End Date",
+						"type": "SqlPoolStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "ForEach1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"sqlPool": {
+							"referenceName": "DB2",
+							"type": "SqlPoolReference"
+						},
+						"typeProperties": {
+							"storedProcedureName": "[stats].[USP_Update_Pipeline_OnSuccess]",
+							"storedProcedureParameters": {
+								"DataSourceName": {
+									"value": {
+										"value": "@pipeline().parameters.Datasourcename",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"pipeline_name": {
+									"value": {
+										"value": "@pipeline().Pipeline",
+										"type": "Expression"
+									},
+									"type": "String"
+								}
+							}
+						}
+					},
+					{
+						"name": "Update Full Load Pipeline End date and failed status",
+						"type": "SqlPoolStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "ForEach1",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"sqlPool": {
+							"referenceName": "DB2",
+							"type": "SqlPoolReference"
+						},
+						"typeProperties": {
+							"storedProcedureName": "[stats].[USP_Update_Pipeline_OnFailure]",
+							"storedProcedureParameters": {
+								"DataSourceName": {
+									"value": {
+										"value": "@pipeline().parameters.Datasourcename",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"pipeline_name": {
+									"value": {
+										"value": "@pipeline().TriggerName",
+										"type": "Expression"
+									},
+									"type": "String"
+								}
+							}
+						}
 					}
 				],
 				"policy": {
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
 				},
+				"parameters": {
+					"Datasourcename": {
+						"type": "string"
+					}
+				},
 				"annotations": []
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/datasets/DB2Connection_another')]",
-				"[concat(variables('workspaceId'), '/datasets/DB2Connection')]",
-				"[concat(variables('workspaceId'), '/sqlPools/DB2')]"
+				"[concat(variables('workspaceId'), '/sqlPools/DB2')]",
+				"[concat(variables('workspaceId'), '/datasets/DB2Connection')]"
 			]
 		},
 		{
@@ -285,7 +423,12 @@
 								"type": "PipelineReference"
 							},
 							"waitOnCompletion": true,
-							"parameters": {}
+							"parameters": {
+								"Datasourcename": {
+									"value": "@pipeline().parameters.DataSourceName",
+									"type": "Expression"
+								}
+							}
 						}
 					},
 					{
@@ -377,6 +520,49 @@
 						},
 						"typeProperties": {
 							"storedProcedureName": "[stats].[USP_Update_Pipeline_OnSuccess]",
+							"storedProcedureParameters": {
+								"DataSourceName": {
+									"value": {
+										"value": "@pipeline().parameters.DataSourceName",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"pipeline_name": {
+									"value": {
+										"value": "@pipeline().Pipeline",
+										"type": "Expression"
+									},
+									"type": "String"
+								}
+							}
+						}
+					},
+					{
+						"name": "Update Master Pipeline End Date and Failed Status",
+						"type": "SqlPoolStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "Employees Incremental Load",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"sqlPool": {
+							"referenceName": "DB2",
+							"type": "SqlPoolReference"
+						},
+						"typeProperties": {
+							"storedProcedureName": "[stats].[USP_Update_Pipeline_OnFailure]",
 							"storedProcedureParameters": {
 								"DataSourceName": {
 									"value": {
