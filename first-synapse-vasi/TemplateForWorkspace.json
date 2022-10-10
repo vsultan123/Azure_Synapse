@@ -1143,7 +1143,7 @@
 										"value": "@pipeline().RunId",
 										"type": "Expression"
 									},
-									"type": "Int32"
+									"type": "Byte[]"
 								},
 								"status": {
 									"value": "SUCCESS",
@@ -1197,7 +1197,7 @@
 										"value": "@pipeline().RunId",
 										"type": "Expression"
 									},
-									"type": "Int32"
+									"type": "Byte[]"
 								},
 								"status": {
 									"value": "FAILED",
