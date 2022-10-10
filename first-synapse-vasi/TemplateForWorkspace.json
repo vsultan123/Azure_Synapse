@@ -25,6 +25,127 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('workspaceName'), '/Full Load Pipeline')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Find tables to be fully Loaded in Target",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlPoolSource",
+								"sqlReaderQuery": "Select * from Stats.DW_ETl_Load where Load_Type='F'",
+								"queryTimeout": "02:00:00"
+							},
+							"dataset": {
+								"referenceName": "DB2Connection_another",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Find tables to be fully Loaded in Target",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Find tables to be fully Loaded in Target').output.value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Full Load",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "SqlPoolSource",
+											"sqlReaderQuery": {
+												"value": "@concat(item().staging_schema_name,'.',item().staging_object_name)",
+												"type": "Expression"
+											},
+											"queryTimeout": "02:00:00"
+										},
+										"sink": {
+											"type": "SqlPoolSink",
+											"writeBehavior": "Insert",
+											"sqlWriterUseTableLock": false
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "DB2Connection_another",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "DB2Connection",
+											"type": "DatasetReference",
+											"parameters": {
+												"Schema": {
+													"value": "@item().Target_Schema_Name",
+													"type": "Expression"
+												},
+												"TableName": "@item().Target_Object_name"
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/DB2Connection_another')]",
+				"[concat(variables('workspaceId'), '/datasets/DB2Connection')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/Source to Staging Load')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
 			"apiVersion": "2019-06-01-preview",
