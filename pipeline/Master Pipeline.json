@@ -26,7 +26,11 @@
 							"type": "Expression"
 						},
 						"Load_Type": "F",
-						"BatchID": "2851"
+						"BatchID": "2851",
+						"Master_pipeline_runid": {
+							"value": "@pipeline().RunId",
+							"type": "Expression"
+						}
 					}
 				}
 			},
