@@ -664,7 +664,14 @@
 					{
 						"name": "Update Full Load Pipeline Start Date",
 						"type": "SqlPoolStoredProcedure",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "Insert Record in ETL Execution History Table",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "0.12:00:00",
 							"retry": 0,
@@ -795,6 +802,191 @@
 								}
 							}
 						}
+					},
+					{
+						"name": "Insert Record in ETL Execution History Table",
+						"type": "SqlPoolStoredProcedure",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"sqlPool": {
+							"referenceName": "DB2",
+							"type": "SqlPoolReference"
+						},
+						"typeProperties": {
+							"storedProcedureName": "[stats].[Insert_Child_ETL_History]",
+							"storedProcedureParameters": {
+								"datasourcename": {
+									"value": {
+										"value": "@pipeline().parameters.Datasourcename",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"master_pipeline_runID": {
+									"value": {
+										"value": "@pipeline().parameters.Master_Pipeline_RunID",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"pipeline_name": {
+									"value": {
+										"value": "@pipeline().Pipeline",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"pipeline_trigger_time": {
+									"value": {
+										"value": "@pipeline().TriggerTime",
+										"type": "Expression"
+									},
+									"type": "DateTime"
+								},
+								"RunID": {
+									"value": {
+										"value": "@pipeline().RunId",
+										"type": "Expression"
+									},
+									"type": "String"
+								}
+							}
+						}
+					},
+					{
+						"name": "Update ETL execution history on success",
+						"type": "SqlPoolStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "ForEach1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"sqlPool": {
+							"referenceName": "DB2",
+							"type": "SqlPoolReference"
+						},
+						"typeProperties": {
+							"storedProcedureName": "[stats].[Update_CHILD_ETL_History]",
+							"storedProcedureParameters": {
+								"datasourcename": {
+									"value": {
+										"value": "@pipeline().parameters.Datasourcename",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"master_pipeline_runID": {
+									"value": {
+										"value": "@pipeline().parameters.Master_Pipeline_RunID",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"pipeline_name": {
+									"value": {
+										"value": "@pipeline().Pipeline",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"RunID": {
+									"value": {
+										"value": "@pipeline().RunId",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"status": {
+									"value": "SUCCESS",
+									"type": "String"
+								}
+							}
+						}
+					},
+					{
+						"name": "Update ETL execution history on Failure",
+						"type": "SqlPoolStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "ForEach1",
+								"dependencyConditions": [
+									"Failed"
+								]
+							},
+							{
+								"activity": "Find tables to be fully Loaded in Target",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"sqlPool": {
+							"referenceName": "DB2",
+							"type": "SqlPoolReference"
+						},
+						"typeProperties": {
+							"storedProcedureName": "[stats].[Update_CHILD_ETL_History]",
+							"storedProcedureParameters": {
+								"datasourcename": {
+									"value": {
+										"value": "@pipeline().parameters.Datasourcename",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"master_pipeline_runID": {
+									"value": {
+										"value": "@pipeline().parameters.Master_Pipeline_RunID",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"pipeline_name": {
+									"value": {
+										"value": "@pipeline().Pipeline",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"RunID": {
+									"value": {
+										"value": "@pipeline().RunId",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"status": {
+									"value": "FAILED",
+									"type": "String"
+								}
+							}
+						}
 					}
 				],
 				"policy": {
@@ -803,6 +995,9 @@
 				},
 				"parameters": {
 					"Datasourcename": {
+						"type": "string"
+					},
+					"Master_Pipeline_RunID": {
 						"type": "string"
 					}
 				},
@@ -873,6 +1068,10 @@
 							"parameters": {
 								"Datasourcename": {
 									"value": "@pipeline().parameters.DataSourceName",
+									"type": "Expression"
+								},
+								"Master_Pipeline_RunID": {
+									"value": "@pipeline().RunId",
 									"type": "Expression"
 								}
 							}
