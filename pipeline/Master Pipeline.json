@@ -86,6 +86,10 @@
 						"DataSourceName": {
 							"value": "@pipeline().parameters.DataSourceName",
 							"type": "Expression"
+						},
+						"Master_Pipeline_RunID": {
+							"value": "@pipeline().RunId",
+							"type": "Expression"
 						}
 					}
 				}
